@@ -7,7 +7,7 @@
 .. |RCP| replace:: MICROEJ SDK
 .. |VEE_PORT| replace:: MicroEJ VEE Port
 .. |VEE_PORTS| replace:: MicroEJ VEE Ports
-.. |VEE_PORT_VER| replace:: 1.0.0
+.. |VEE_PORT_VER| replace:: 1.0.1
 .. |SIM| replace:: MicroEJ Simulator
 .. |ARCH| replace:: MicroEJ Architecture
 .. |CIDE| replace:: MICROEJ SDK

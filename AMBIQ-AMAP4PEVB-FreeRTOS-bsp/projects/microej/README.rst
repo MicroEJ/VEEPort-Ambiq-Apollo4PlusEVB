@@ -3,7 +3,7 @@
 	Use of this source code is governed by a BSD-style license that can be found with this software.
 
 .. |BOARD_NAME| replace:: AMAP4PEVB
-.. |VEE_PORT_VER| replace:: 1.0.0
+.. |VEE_PORT_VER| replace:: 1.0.1
 .. |RCP| replace:: MICROEJ SDK
 .. |VEE_PORT| replace:: MicroEJ VEE Port
 .. |VEE_PORTS| replace:: MicroEJ VEE Ports

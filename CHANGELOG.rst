@@ -10,7 +10,16 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_
 
 ----------------------
- [1.0.0] - RC
+ [1.0.1] - 2023-08-10
+----------------------
+
+Fixed
+=====
+
+- Update changelog date and VEE Port version.
+
+----------------------
+ [1.0.0] - 2023-08-10
 ----------------------
 
 Added
