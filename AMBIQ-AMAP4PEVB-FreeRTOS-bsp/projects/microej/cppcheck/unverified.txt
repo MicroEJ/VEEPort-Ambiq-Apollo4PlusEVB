@@ -1,0 +1,250 @@
+# 
+# TXT
+# 
+# Copyright 2023 MicroEJ Corp. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be found with this software.
+# 
+
+--- CPPCheck unverified lines --
+
+--- ../../ui/src/buttons_driver.c
+--- ../../ui/inc/event_generator.h
+14 extern "C"
+15 {
+28 }
+--- ../../ui/inc/buttons_driver.h
+13 extern "C"
+14 {
+27 }
+--- ../../ui/src/event_generator.c
+--- ../../platform/inc/microui_constants.h
+4 extern "C" {
+11 }
+--- ../../platform/inc/LLUI_INPUT.h
+10 extern "C" {
+468 }
+--- ../../ui/inc/microui_event_decoder_conf.h
+30 extern "C" {
+98 }
+--- ../../platform/inc/sni.h
+19 extern "C" {
+622 }
+--- ../../core/src/fault_handlers.c
+117 void printer(uint32_t current_sp, uint32_t msp, uint32_t psp, uint32_t exc_return);
+119 __asm void print_stacked_registers()
+120 {
+121 TST     LR, #4
+122 ITE     EQ
+123 MRSEQ   R0, MSP
+124 MRSNE   R0, PSP
+125 MRS     R1, MSP
+126 MRS     R2, PSP
+127 MOV     R3, LR
+129 LDR     R4, =__cpp(printer)
+130 BX      R4
+131 }
+178 static void printer(uint32_t current_sp, uint32_t msp, uint32_t psp, uint32_t exc_return)
+179 {
+180 uint32_t *sp;
+181 am_util_stdio_printf("---------------------------------------------------------------------\n");
+183 am_util_stdio_printf("Current SP = %.8lX\n", current_sp);
+184 am_util_stdio_printf("MSP = %.8lX\n", msp);
+185 am_util_stdio_printf("PSP = %.8lX\n", psp);
+186 am_util_stdio_printf("\n");
+189 sp = (uint32_t*) current_sp;
+190 am_util_stdio_printf("Stack frame:\n");
+191 am_util_stdio_printf("R0 =\t%.8lX\n", *sp++);
+192 am_util_stdio_printf("R1 =\t%.8lX\n", *sp++);
+193 am_util_stdio_printf("R2 =\t%.8lX\n", *sp++);
+194 am_util_stdio_printf("R3 =\t%.8lX\n", *sp++);
+195 am_util_stdio_printf("R12 =\t%.8lX\n", *sp++);
+196 am_util_stdio_printf("LR =\t%.8lX\n", *sp++);
+197 am_util_stdio_printf("PC =\t%.8lX\n", *sp++);
+198 am_util_stdio_printf("xPSR =\t%.8lX\n", *sp++);
+199 am_util_stdio_printf("\n");
+201 am_util_stdio_printf("EXC_RETURN (LR) = %.8lX\n", exc_return);
+203 am_util_stdio_printf("---------------------------------------------------------------------\n");
+204 }
+212 void HardFault_Handler(void)
+213 {
+214 uint32_t hfsr;
+215 print_stacked_registers();
+216 am_util_stdio_printf(__func__);
+218 hfsr = SCB->HFSR;
+219 am_util_stdio_printf("Hard Fault Status Register =\t%lX\n", hfsr);
+221 if((hfsr & SCB_HFSR_FORCED_Msk) == SCB_HFSR_FORCED_Msk)
+222 {
+223 am_util_stdio_printf("FORCED");
+224 }
+226 }
+232 void MemFault_Handler (void)
+233 {
+234 print_stacked_registers();
+235 am_util_stdio_printf(__func__);
+237 INFINITE_LOOP();
+238 }
+244 void BusFault_Handler (void)
+245 {
+246 uint32_t cfsr;
+247 uint8_t bfsr;
+248 uint32_t bfar;
+249 bool still_valid;
+250 print_stacked_registers();
+251 am_util_stdio_printf(__func__);
+253 cfsr = SCB->CFSR;
+254 am_util_stdio_printf("Configurable Fault Status Register =\t%.8lX\n", cfsr);
+256 bfsr = (cfsr & SCB_CFSR_BUSFAULTSR_Msk) >> SCB_CFSR_BUSFAULTSR_Pos;
+257 am_util_stdio_printf("Bus Fault Status Register =\t%.2X\n", bfsr);
+259 if(((uint32_t)bfsr & BFSR_IBUSERR_Msk) == BFSR_IBUSERR_Msk )
+260 {
+261 am_util_stdio_printf("Instruction access error");
+263 }
+265 if((((uint32_t)bfsr & BFSR_PRECISERR_Msk) == BFSR_PRECISERR_Msk))
+266 {
+267 am_util_stdio_printf("Precise data access error");
+273 bfar = SCB->BFAR;
+274 am_util_stdio_printf("Address of faulting data access (BFAR) = %.8lX\n", bfar);
+277 still_valid = ((uint32_t)cfsr & BFSR_BFARVALID_Msk) == BFSR_BFARVALID_Msk;
+278 if(!still_valid)
+279 {
+280 am_util_stdio_printf("WARNING: BFAR is no longer valid!");
+281 }
+282 }
+284 if(((uint32_t)bfsr & BFSR_IMPRECISERR_Msk) == BFSR_IMPRECISERR_Msk)
+285 {
+286 am_util_stdio_printf("Imprecise data access error");
+287 }
+289 INFINITE_LOOP();
+290 }
+296 void UsageFault_Handler (void)
+297 {
+298 uint32_t cfsr;
+299 uint16_t ufsr;
+302 print_stacked_registers();
+303 am_util_stdio_printf(__func__);
+305 cfsr = SCB->CFSR;
+306 am_util_stdio_printf("Configurable Fault Status Register =\t%lX\n", cfsr);
+308 ufsr = (cfsr & SCB_CFSR_USGFAULTSR_Msk) >> SCB_CFSR_USGFAULTSR_Pos;
+309 am_util_stdio_printf("Usage Fault Status Register =\t%X\n", ufsr);
+311 if(((uint32_t)ufsr & UFSR_UNDEFINSTR_Msk) == UFSR_UNDEFINSTR_Msk)
+312 {
+313 am_util_stdio_printf("Attempt to execute an undefined instruction");
+314 }
+316 if(((uint32_t)ufsr & UFSR_INVSTATE_Msk) == UFSR_INVSTATE_Msk)
+317 {
+318 am_util_stdio_printf("Attempt to switch to invalid mode (like ARM state)");
+319 }
+321 INFINITE_LOOP();
+322 }
+--- ../../core/inc/fault_handlers.h
+--- ../../main/src/FreeRTOS_hooks.c
+119 is accounted for as best it can be, but using the tickless mode will
+120 inevitably result in some tiny drift of the time maintained by the
+121 kernel with respect to calendar time. */
+125 tick periods.  -1 is used because this code will execute part way
+126 through one of the tick periods. */
+135 method as that will mask interrupts that should exit sleep mode. */
+141 to be unsuspended then abandon the low power entry. */
+145 this tick period. */
+152 periods. */
+156 call above. */
+167 set its parameter to 0 to indicate that its implementation contains
+168 its own wait for interrupt or wait for event instruction, and so wfi
+169 should not be executed again.  However, the original expected idle
+170 time variable must remain unmodified, so a copy is taken. */
+182 out of sleep mode to execute immediately.  see comments above
+183 __disable_interrupt() call above. */
+189 and interrupts that execute while the clock is stopped will increase
+190 any slippage between the time maintained by the RTOS and calendar
+191 time. */
+197 portNVIC_SYSTICK_CTRL_REG register to ensure the
+198 portNVIC_SYSTICK_COUNT_FLAG_BIT is not cleared if it is set.  Again,
+199 the time the SysTick is stopped for is accounted for as best it can
+200 be, but using the tickless mode will inevitably result in some tiny
+201 drift of the time maintained by the kernel with respect to calendar
+202 time*/
+206 been set back to the current reload value (the reload back being
+207 correct for the entire expected idle time) or if the SysTick is yet
+208 to count to zero (in which case an interrupt other than the SysTick
+209 must have brought the system out of sleep mode). */
+215 reloaded with ulReloadValue.  Reset the
+216 portNVIC_SYSTICK_LOAD_REG with whatever remains of this tick
+217 period. */
+221 underflowed because the post sleep hook did something
+222 that took too long. */
+231 function exits, the tick value maintained by the tick is stepped
+232 forward by one less than the time spent waiting. */
+238 Work out how long the sleep lasted rounded to complete tick
+239 periods (not the ulReload value which accounted for part
+240 ticks). */
+244 was waiting? */
+248 period remains. */
+253 again, then set portNVIC_SYSTICK_LOAD_REG back to its standard
+254 value. */
+--- ../../core/src/LLEXT_RES_impl.c
+--- ../../platform/inc/LLEXT_RES_impl.h
+12 extern "C" {
+99 }
+--- ../../ui/src/LLUI_DISPLAY_impl.c
+--- ../../platform/inc/LLUI_DISPLAY_impl.h
+10 extern "C" {
+236 BESTFIT_ALLOCATOR_initialize(&image_heap, (int32_t)heap_start, (int32_t)heap_limit);
+524 }
+--- ../../ui/inc/ui_buffer.h
+12 extern "C"
+13 {
+20 }
+--- ../../platform/inc/ui_drawing.h
+10 extern "C" {
+526 }
+--- ../../ui/inc/ui_drawing_nema.h
+160 DRAWING_Status UI_DRAWING_NEMA_drawHorizontalLine(MICROUI_GraphicsContext* gc, jint x1, jint x2, jint y);
+165 DRAWING_Status UI_DRAWING_NEMA_drawVerticalLine(MICROUI_GraphicsContext* gc, jint x, jint y1, jint y2);
+170 DRAWING_Status UI_DRAWING_NEMA_drawRectangle(MICROUI_GraphicsContext* gc, jint x1, jint y1, jint x2, jint y2);
+186 DRAWING_Status UI_DRAWING_NEMA_drawRoundedRectangle(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint cornerEllipseWidth, jint cornerEllipseHeight);
+192 DRAWING_Status UI_DRAWING_NEMA_fillRoundedRectangle(MICROUI_GraphicsContext* gc, jint x, jint y, jint width, jint height, jint cornerEllipseWidth, jint cornerEllipseHeight);
+197 DRAWING_Status UI_DRAWING_NEMA_drawCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter);
+202 DRAWING_Status UI_DRAWING_NEMA_fillCircle(MICROUI_GraphicsContext* gc, jint x, jint y, jint diameter);
+--- ../../platform/inc/LLUI_PAINTER_impl.h
+10 extern "C" {
+689 }
+--- ../../platform/inc/LLUI_DISPLAY.h
+10 extern "C" {
+550 }
+--- ../../ui/src/LLUI_INPUT_impl.c
+--- ../../platform/inc/LLUI_INPUT_impl.h
+10 extern "C" {
+166 consumed ("past" events) and first log is the latest event or data
+167 stored in the queue.
+188 }
+--- ../../ui/inc/touch_manager.h
+--- ../../ui/src/LLUI_LED_impl.c
+--- ../../platform/inc/LLUI_LED_impl.h
+10 extern "C" {
+88 }
+--- ../../ui/src/LLUI_PAINTER_impl.c
+31 extern "C" {
+501 }
+--- ../../main/src/main.c
+100 "\tPart number: 0x%08X\n"
+101 "\tChip ID0:    0x%08X\n"
+102 "\tChip ID1:    0x%08X\n"
+--- ../../core/inc/microej_main.h
+21 extern "C" {
+32 }
+--- ../../main/inc/power.h
+--- ../../core/src/microej_time_hard.c
+--- ../../core/inc/microej_time.h
+27 extern "C" {
+67 }
+--- ../../core/src/microej_validation.c
+--- ../../ui/src/microui_rotation.c
+--- ../../main/src/power.c
+--- ../../main/inc/FreeRTOSConfig.h
+15 extern "C"
+16 {
+134 }
+--- ../../ui/src/touch_helper.c
+--- ../../ui/inc/touch_helper_configuration.h
+--- ../../ui/inc/touch_helper.h
+--- ../../ui/src/touch_manager.c

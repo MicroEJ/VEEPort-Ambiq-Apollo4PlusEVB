@@ -1,0 +1,4 @@
+[submodule "AMBIQ-AMAP4PEVB-FreeRTOS-bsp/projects/microej/cppcheck/scripts"]
+	path = AMBIQ-AMAP4PEVB-FreeRTOS-bsp/projects/microej/cppcheck/scripts
+	url = git@gitlab.cross:M0113_Platformers/M0113_CPPCheck.git
+	branch = master

@@ -1,0 +1,11 @@
+**/target~/
+**/dropins/
+AMAP4PEVB-Platform-CM4hardfp_IAR83-*/build/*
+AMAP4PEVB-Platform-CM4hardfp_IAR83-*/source/*
+
+**/iar/Release/
+**/iar/settings/
+*.dep
+*.ewt
+
+AMBIQ-AMAP4PEVB-FreeRTOS-bsp/projects/microej/cppcheck/html-report
