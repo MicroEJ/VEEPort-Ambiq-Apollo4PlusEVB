@@ -1,7 +1,7 @@
 **/target~/
 **/dropins/
-AMAP4PEVB-Platform-CM4hardfp_IAR83-*/build/*
-AMAP4PEVB-Platform-CM4hardfp_IAR83-*/source/*
+AMAP4PEVB-VEEPort-CM4hardfp_IAR83-*/build/*
+AMAP4PEVB-VEEPort-CM4hardfp_IAR83-*/source/*
 
 **/iar/Release/
 **/iar/settings/

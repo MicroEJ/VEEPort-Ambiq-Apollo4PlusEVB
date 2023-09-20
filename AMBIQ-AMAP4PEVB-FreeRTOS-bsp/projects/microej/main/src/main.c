@@ -23,12 +23,12 @@
 #endif
 
 /* Private define ------------------------------------------------------------*/
-#define MICROJVM_STACK_SIZE      (5 * 1024)
+#define MICROEJ_CORE_ENGINE_TASK_STACK_SIZE      (5 * 1024)
 #define JAVA_TASK_PRIORITY       ( 4 ) /** Should be > tskIDLE_PRIORITY & < configTIMER_TASK_PRIORITY */
-#define JAVA_TASK_STACK_SIZE     MICROJVM_STACK_SIZE/4
+#define JAVA_TASK_STACK_SIZE     MICROEJ_CORE_ENGINE_TASK_STACK_SIZE/4
 
 
-#ifdef CORE_QUALIFICATION
+#ifdef MICROEJ_CORE_VALIDATION
 #include "t_core_main.h"
 #endif
 
@@ -124,6 +124,9 @@ int main(void) {
         
 	am_hal_interrupt_master_enable();
 
+#ifdef MICROEJ_CORE_VALIDATION
+	T_CORE_main();
+#else
 	/* Start MicroJvm task */
 	TaskHandle_t pvCreatedTask;
 	xTaskCreate(xJavaTaskFunction, "MicroJvm", JAVA_TASK_STACK_SIZE, NULL, JAVA_TASK_PRIORITY, &pvCreatedTask);
@@ -136,14 +139,11 @@ int main(void) {
 	SEGGER_SYSVIEW_setMicroJVMTask((U32)pvCreatedTask);
         //SEGGER_SYSVIEW_Start();
         
-#endif
+#endif //SYSTEM_VIEW
+#endif //MICROEJ_CORE_VALIDATION
+
 	// Start the scheduler.
-#ifdef CORE_QUALIFICATION
-	T_CORE_main();
-#endif
 	vTaskStartScheduler();
 	while (1){};
 
-	// It might be necessary to call this function at some point.
-	//am_hal_dsi_deinit();
 }

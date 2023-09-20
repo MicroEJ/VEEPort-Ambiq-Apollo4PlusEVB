@@ -5,7 +5,15 @@
 -->
 <results version="2">
     <cppcheck version="2.10"/>
-    <errors>
+    <errors><error id="misra-c2012-8.4" severity="style" msg="(IAR VERBOSE,IAR) A compatible declaration shall be visible when an object or function with external linkage is defined" verbose="A compatible declaration shall be visible when an object or function with external linkage is defined" file0=".cppcheck.IAR/LLMJVM_FreeRTOS.a1.dump">
+            <location file="..\..\platform\inc\intern\LLMJVM_impl.h" line="34" column="8"/>
+        </error>
+    <error id="misra-c2012-8.7" severity="style" msg="(IAR VERBOSE,IAR,CC_ARM,CC_ARM VERBOSE) Functions and objects should not be defined with external linkage if they are referenced in only one translation unit" verbose="Functions and objects should not be defined with external linkage if they are referenced in only one translation unit">
+            <location file="..\..\platform\inc\intern\LLMJVM_impl.h" line="34" column="8"/>
+        </error>
+    <error id="misra-c2012-8.4" severity="style" msg="(CC_ARM,CC_ARM VERBOSE) A compatible declaration shall be visible when an object or function with external linkage is defined" verbose="A compatible declaration shall be visible when an object or function with external linkage is defined" file0=".cppcheck.CC_ARM/LLMJVM_FreeRTOS.a1.dump">
+            <location file="..\..\platform\inc\intern\LLMJVM_impl.h" line="34" column="8"/>
+        </error>
     </errors>
     
 </results>

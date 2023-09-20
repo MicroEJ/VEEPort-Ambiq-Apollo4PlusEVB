@@ -39,7 +39,7 @@ This project is used to build a MicroEJ VEE Port for the |MANUFACTURER| |BOARD_N
   :align: center
   :width: 400px
 
-Clone the repository with ``git clone https://gitlab.cross/P0264_Ambiq-Apollo/P0264_Ambiq-Apollo4PlusEVB.git``
+Clone the repository with ``git clone --recursive https://github.com/MicroEJ/VEEPort_Ambiq-Apollo4PlusEVB.git``
 
 
 Related Files
@@ -201,7 +201,7 @@ The internal memory can be programmed using IAR or Segger J-Link Software.
 Logs output
 -----------
 
-MicroEJ platform uses the virtual UART from the |BOARD_NAME|
+MicroEJ VEE Port uses the virtual UART from the |BOARD_NAME|
 USB port.  A COM port is automatically mounted when the board is
 plugged to a computer using USB cable.  All board logs are available
 through this COM port.
@@ -253,7 +253,7 @@ Inside |RCP|, the selected example is imported as several projects
 prefixed by the given name:
 
 - ``AMBIQ-AMAP4PEVB-FreeRTOS-configuration``: contains the
-  platform configuration description. Some modules are described in a
+  VEE Port configuration description. Some modules are described in a
   specific sub-folder / with some optional configuration files
   (``.properties`` and / or ``.xml``).
 
@@ -264,10 +264,10 @@ prefixed by the given name:
   support package.
 
 - ``AMBIQ-AMAP4PEVB-FreeRTOS-fp``: Contains the board description
-  and images for the |SIM|. This project is updated once the platform
+  and images for the |SIM|. This project is updated once the VEE Port
   is built.
 
-- ``AMAP4PEVB-Platform-CM4harfp_IAR83-{version}``:
+- ``AMAP4PEVB-VEEPort-CM4harfp_IAR83-{version}``:
   Contains the |RCP| VEE Port project which is empty by default until
   the VEE Port is built.
 
@@ -301,7 +301,7 @@ project.
 
 
 The VEE Port project should be refreshed with no error in the |RCP|
-``AMAP4PEVB-Platform-CM4harfp_IAR83-{version}``.
+``AMAP4PEVB-VEEPort-CM4harfp_IAR83-{version}``.
 
 Please refer to
 https://docs.microej.com/en/latest/ApplicationDeveloperGuide/standaloneApplication.html
@@ -318,5 +318,5 @@ Testsuite Configuration
 To run a Testsuite on the |BOARD_NAME| board please refer to the testsuite tutorial `here <https://docs.microej.com/en/latest/Tutorials/tutorialRunATestSuiteOnDevice.html>`__ 
 
 In ``config.properties``, the property ``target.platform.dir`` must be
-set to the absolute path to the platform.  For example
-``C:/AMAP4PEVB-Platform-CM4hardfp_IAR83-{version}/source``.
+set to the absolute path to the VEE Port.  For example
+``C:/AMAP4PEVB-VEEPort-CM4hardfp_IAR83-{version}/source``.

@@ -381,7 +381,7 @@
                     <state>$PROJ_DIR$\..\validation\tests\core\c\inc</state>
                     <state>$PROJ_DIR$\..\validation\framework\c\utils\inc</state>
                     <state>$PROJ_DIR$\..\validation\framework\c\embunit\embUnit</state>
-                    <state>$PROJ_DIR$\..\..\CoreMark</state>
+                    <state>$PROJ_DIR$\..\validation\framework\c\coremark</state>
                     <state>$PROJ_DIR$\..\thirdparty\systemview\inc</state>
                     <state>$PROJ_DIR$\..\thirdparty\systemview-freertos\inc</state>
                     <state>$PROJ_DIR$\..\core-qualification\inc</state>
@@ -1224,6 +1224,27 @@
         <group>
             <name>validation</name>
             <group>
+                <name>CoreMark</name>
+                <file>
+                    <name>$PROJ_DIR$\..\validation\framework\c\coremark\core_list_join.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\validation\framework\c\coremark\core_main.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\validation\framework\c\coremark\core_matrix.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\validation\framework\c\coremark\core_state.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\validation\framework\c\coremark\core_util.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\validation\framework\c\coremark\coremark.h</name>
+                </file>
+            </group>
+            <group>
                 <name>port</name>
                 <file>
                     <name>$PROJ_DIR$\..\validation\port\src\core_portme.c</name>
@@ -1380,27 +1401,6 @@
     </group>
     <group>
         <name>thirdparty</name>
-        <group>
-            <name>CoreMark</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\CoreMark\core_list_join.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\CoreMark\core_main.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\CoreMark\core_matrix.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\CoreMark\core_state.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\CoreMark\core_util.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\CoreMark\coremark.h</name>
-            </file>
-        </group>
         <group>
             <name>EmbUnit</name>
             <file>

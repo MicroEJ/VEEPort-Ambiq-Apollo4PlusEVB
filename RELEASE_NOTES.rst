@@ -7,7 +7,7 @@
 .. |RCP| replace:: MICROEJ SDK
 .. |VEE_PORT| replace:: MicroEJ VEE Port
 .. |VEE_PORTS| replace:: MicroEJ VEE Ports
-.. |VEE_PORT_VER| replace:: 1.0.1
+.. |VEE_PORT_VER| replace:: 1.0.2
 .. |SIM| replace:: MicroEJ Simulator
 .. |ARCH| replace:: MicroEJ Architecture
 .. |CIDE| replace:: MICROEJ SDK
@@ -96,6 +96,78 @@ MicroUI requires a RAM buffer to store the dynamic images data.  A
 dynamic image is an image decoded at runtime (PNG image) or an image created
 by the Application using the ``Image.create(width, height)`` API.
 This buffer is located in external RAM.
+
+
+
+MISRA Compliance
+================
+
+This VEE Port has a list of components that are MISRA-compliant (MISRA C:2012) with some noted exception.
+Below is the list of ``folders that have been verified``:
+
+- microej/core/
+- microej/main/
+- microej/ui/
+
+Among the folders verified, below is the list of ``files that have not been verified``:
+
+- core/src/LLBSP_generic.c
+- core/src/microej_main.c
+- core/src/microej_time_freertos.c
+- ui/src/LLDW_PAINTER_impl.c
+- ui/src/LLUI_INPUT_LOG_impl.c
+- ui/src/microui_event_decoder.c
+- ui/src/LLUI_DISPLAY_HEAP_impl.c
+- ui/src/ui_drawing_nema.c
+
+It has been verified with Cppcheck v2.10. Here is the list of deviations from MISRA standard:
+
++------------+-----------+----------------------------------------------------------------------+
+| Deviation  | Category  | Justification                                                        |
++============+===========+======================================================================+
+| Rule 2.3   | Advisory  | A type can be defined at API level and not used by the application.  |
+|            |           |                                                                      |
+| Rule 2.4   | Advisory  | A tag can be defined at API level and not used by the application.   |
+|            |           |                                                                      |
+| Rule 2.5   | Advisory  | A macro can be defined at API level and not used by the application. |
+|            |           |                                                                      |
+| Rule 5.5   | Required  | Intentional usage of macros to define native functions.              |
+|            |           |                                                                      |
+| Rule 8.2   | Required  | False positive error.                                                |
+|            |           |                                                                      |
+| Rule 8.4   | Required  | Cannot be seen during analysis.                                      |
+|            |           |                                                                      |
+| Rule 8.7   | Advisory  | External linkage, cannot be seen during analysis.                    |
+|            |           |                                                                      |
+| Rule 8.9   | Advisory  | Global buffer needed for the java world.                             |
+|            |           |                                                                      |
+| Rule 10.8  | Required  | Cast for include in nema matrix.                                     |
+|            |           |                                                                      |
+| Rule 11.3  | Required  | Used by many C framework to factorize code                           |
+|            |           |                                                                      |
+| Rule 11.4  | Advisory  | Used when coding BSP C source code (drivers, etc.)                   |
+|            |           |                                                                      |
+| Rule 11.8  | Required  | Need to cast for the function signature.                             |
+|            |           |                                                                      |
+| Rule 12.2  | Required  | Only sliding 15 bit on a 32 bit variable.                            |
+|            |           |                                                                      |
+| Rule 14.4  | Required  | False positive: The function return a bool.                          |
+|            |           |                                                                      |
+| Rule 17.8  | Required  | Can be useful when designing C library.                              |
+|            |           |                                                                      |
+| Rule 18.4  | Required  | Can be used in configurable C library.                               |
+|            |           |                                                                      |
+| Rule 20.9  | Required  | configUSE_TICKLESS_IDLE defined in the FreeRTOSConfig.h.             |
+|            |           |                                                                      |
+| Rule 20.10 | Advisory  | Used by MicroEJ architectures.                                       |
+|            |           |                                                                      |
+| Rule 20.14 | Required  | False positive, #if above.                                           |
+|            |           |                                                                      |
+| Rule 21.1  | Required  | Underscore prefix in library headers guard.                          |
+|            |           |                                                                      |
+| Rule 21.6  | Required  | Used for printf usage only.                                          |
++------------+-----------+----------------------------------------------------------------------+
+
 
 
 Known issues/limitations

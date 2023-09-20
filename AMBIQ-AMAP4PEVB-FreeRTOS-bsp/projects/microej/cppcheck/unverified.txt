@@ -185,6 +185,16 @@
 --- ../../platform/inc/LLEXT_RES_impl.h
 12 extern "C" {
 99 }
+--- ../../core/src/LLMJVM_FreeRTOS.c
+37 extern "C" {
+154 or the existing request is already done */
+253 }
+--- ../../core/inc/LLMJVM_FreeRTOS_configuration.h
+--- ../../platform/inc/LLMJVM_impl.h
+--- ../../core/inc/microej_time.h
+27 extern "C" {
+67 }
+--- ../../platform/inc/intern/LLMJVM_impl.h
 --- ../../ui/src/LLUI_DISPLAY_impl.c
 --- ../../platform/inc/LLUI_DISPLAY_impl.h
 10 extern "C" {
@@ -234,9 +244,6 @@
 32 }
 --- ../../main/inc/power.h
 --- ../../core/src/microej_time_hard.c
---- ../../core/inc/microej_time.h
-27 extern "C" {
-67 }
 --- ../../core/src/microej_validation.c
 --- ../../ui/src/microui_rotation.c
 --- ../../main/src/power.c

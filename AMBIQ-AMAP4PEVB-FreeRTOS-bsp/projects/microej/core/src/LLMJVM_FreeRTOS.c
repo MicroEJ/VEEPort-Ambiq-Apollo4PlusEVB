@@ -1,7 +1,7 @@
 /*
  * C
  *
- * Copyright 2018-2022 MicroEJ Corp. All rights reserved.
+ * Copyright 2018-2023 MicroEJ Corp. All rights reserved.
  * Use of this source code is governed by a BSD-style license that can be found with this software.
  */
 
@@ -9,7 +9,7 @@
  * @file
  * @brief LLMJVM implementation over FreeRTOS.
  * @author MicroEJ Developer Team
- * @version 1.3.0
+ * @version 1.4.0
  */
 
 /*
@@ -18,12 +18,9 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "misra_2004_conf.h"
-
-MISRA_2004_DISABLE_ALL
 #include <stdlib.h>
-#include <stdio.h>
 #include <stdbool.h>
+#include <assert.h>
 
 #include "LLMJVM_FreeRTOS_configuration.h"
 #include FREERTOS_HEADER
@@ -35,7 +32,6 @@ MISRA_2004_DISABLE_ALL
 #include "microej_time.h"
 #include "microej.h"
 #include "sni.h"
-MISRA_2004_ENABLE_ALL
 
 #ifdef __cplusplus
     extern "C" {
@@ -56,10 +52,11 @@ MISRA_2004_ENABLE_ALL
  * Shared variables
  */
 /* Absolute time in ms at which timer will be launched */
+// cppcheck-suppress misra-c2012-8.9 // Global variable used across native function calls.
 static int64_t LLMJVM_FREERTOS_next_wake_up_time = INT64_MAX;
 
 /* Set to true when the timer expires, set to true when the timer is started. */
-volatile bool LLMJVM_FREERTOS_timer_expired = false;
+static volatile bool LLMJVM_FREERTOS_timer_expired = false;
 
 /* Timer for scheduling next alarm */
 static TimerHandle_t LLMJVM_FREERTOS_wake_up_timer;
@@ -75,18 +72,14 @@ static void wake_up_timer_callback(TimerHandle_t timer);
  * Since LLMJVM_schedule() prototype does not match the timer callback prototype,
  * we create a wrapper around it and check the ID of the timer.
  */
-MISRA_2004_DISABLE_RULE_11_3
 static void wake_up_timer_callback(TimerHandle_t timer) {
 	uint32_t id = (uint32_t) pvTimerGetTimerID(timer);
 	if (id == (uint32_t)WAKE_UP_TIMER_ID) {
 		LLMJVM_FREERTOS_timer_expired = true;
-		LLMJVM_schedule();
+		int32_t result = LLMJVM_schedule();
+		assert(LLMJVM_OK == result);
 	}
 }
-MISRA_2004_ENABLE_ALL
-
-/* Required declaration to avoid a warning. */
-BaseType_t IS_INSIDE_INTERRUPT();
 
 /* Public functions ----------------------------------------------------------*/
 
@@ -99,12 +92,11 @@ BaseType_t IS_INSIDE_INTERRUPT();
  * Creates the timer used to callback the LLMJVM_schedule() function.
  * After its creation, the timer is idle.
  */
-MISRA_2004_DISABLE_RULE_11_3
 int32_t LLMJVM_IMPL_initialize(void) {
 	int32_t result = LLMJVM_OK;
 	/* Create a timer to schedule an alarm for the VM */
-	LLMJVM_FREERTOS_wake_up_timer = xTimerCreate(NULL, (TickType_t )100, (UBaseType_t)pdFALSE,
-			(void*) WAKE_UP_TIMER_ID, wake_up_timer_callback);
+	// cppcheck-suppress misra-c2012-11.6 // Cast for matching xTimerCreate function signature.
+	LLMJVM_FREERTOS_wake_up_timer = xTimerCreate(NULL, (TickType_t)100, (UBaseType_t)pdFALSE, (void*) WAKE_UP_TIMER_ID, wake_up_timer_callback);
 
 	if (LLMJVM_FREERTOS_wake_up_timer == NULL) {
 		result = LLMJVM_ERROR;
@@ -114,15 +106,11 @@ int32_t LLMJVM_IMPL_initialize(void) {
 		if (LLMJVM_FREERTOS_Semaphore == NULL) {
 			result = LLMJVM_ERROR;
 		} else {
-			/* Created semaphore is in an empty state meaning that
-                            it must first be given before it can be taken. */
-			xSemaphoreGive(LLMJVM_FREERTOS_Semaphore);
 			microej_time_init();
 		}
 	}
 	return result;
 }
-MISRA_2004_ENABLE_ALL
 
 /*
  * Once the task is started, save a handle to it.
@@ -136,8 +124,11 @@ int32_t LLMJVM_IMPL_vmTaskStarted(void) {
  */
 int32_t LLMJVM_IMPL_scheduleRequest(int64_t absoluteTime) {
 	int32_t result = LLMJVM_OK;
-	int64_t currentTime, relativeTime, relativeTick; 
-	portBASE_TYPE xTimerChangePeriodResult, xTimerStartResult;
+	int64_t currentTime;
+	int64_t relativeTime;
+	int64_t relativeTick;
+	portBASE_TYPE xTimerChangePeriodResult;
+	portBASE_TYPE xTimerStartResult;
 
 	currentTime = LLMJVM_IMPL_getCurrentTime(MICROEJ_TRUE);
 
@@ -197,13 +188,10 @@ int32_t LLMJVM_IMPL_idleVM(void) {
 /* 
  * Wakes up the VM task 
  */
-MISRA_2004_DISABLE_RULE_10_6
-MISRA_2004_DISABLE_RULE_11_3
-MISRA_2004_DISABLE_RULE_14_3
 int32_t LLMJVM_IMPL_wakeupVM(void) {
 	portBASE_TYPE res;
 
-	if (IS_INSIDE_INTERRUPT()) {
+	if (IS_INSIDE_INTERRUPT() == pdTRUE) {
 		portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 		res = xSemaphoreGiveFromISR(LLMJVM_FREERTOS_Semaphore,
 				&xHigherPriorityTaskWoken);
@@ -217,7 +205,6 @@ int32_t LLMJVM_IMPL_wakeupVM(void) {
 
 	return (res == pdTRUE) ? (int32_t) LLMJVM_OK : (int32_t) LLMJVM_ERROR;
 }
-MISRA_2004_ENABLE_ALL
 
 /*
  * Clear the pending wake up flag and reset next wake up time
@@ -229,11 +216,9 @@ int32_t LLMJVM_IMPL_ackWakeup(void) {
 /*
  * Gets the system or the application time in milliseconds
  */
-MISRA_2004_DISABLE_RULE_11_3
 int32_t LLMJVM_IMPL_getCurrentTaskID(void) {
 	return (int32_t) xTaskGetCurrentTaskHandle();
 }
-MISRA_2004_ENABLE_ALL
 
 /*
  * Sets the application time
@@ -245,11 +230,10 @@ void LLMJVM_IMPL_setApplicationTime(int64_t t) {
 /*
  * Gets the system or the application time in milliseconds
  */
-MISRA_2004_DISABLE_RULE_16_4
+// cppcheck-suppress misra-c2012-8.7 // External API which is called also internally, cannot be made static.
 int64_t LLMJVM_IMPL_getCurrentTime(uint8_t sys) {
 	return microej_time_get_current_time(sys);
 }
-MISRA_2004_ENABLE_ALL
 
 /*
  * Gets the system time in nanoseconds

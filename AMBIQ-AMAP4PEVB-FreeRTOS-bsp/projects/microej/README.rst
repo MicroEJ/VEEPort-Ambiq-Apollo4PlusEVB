@@ -56,25 +56,24 @@ The CPU clock can be put at either at :
 Build & Run Scripts
 ---------------------
 
-In the folder ``project/microej/iar/scripts/`` 
-for the IAR toolchain are scripts that can be used to build and flash the BSP.
+In the directory ``project/microej/scripts/`` are scripts that can be
+used to build and flash the BSP.  The ``.bat`` and ``.sh`` scripts are
+meant to run in a Windows and Linux environment respectively.
 
-- The ``build.bat`` scripts are used to compile and link the BSP with a
+- The ``build*`` scripts are used to compile and link the BSP with a
   MicroEJ Application to produce a MicroEJ Firmware
   (``application.out``) that can be flashed on a device.
 
-- The ``run.bat`` scripts are used to flash a MicroEJ Firmware
+  The ``build*`` scripts work out of the box, assuming the toolchain is
+  installed in the default path.
+
+- The ``run*`` scripts are used to flash a MicroEJ Firmware
   (``application.out``) on a device.
-
-These scripts work out of the box, assuming the toolchain is
-installed in the default path.
-
-The following environment variables are customizable:
 
 **IAR toolchain**
 
 - ``IAREW_INSTALLATION_DIR``: The path to IAR installation directory (already set to the default IAR Workbench default installation directory).
-- ``IAREW_PROJECT_CONFIGURATION``: The project configuration (``Debug`` or ``Release``).
+- ``IAREW_PROJECT_CONFIGURATION``: The project configuration (``Release``).
 - ``IAREW_PROJECT_DIR``: The directory that contains the ``application.eww`` IAR project file (set to ``%~dp0``: the directory that contains the executed ``.bat``).
 - ``IAREW_PROJECT_NAME``: The Eclipse CDT project name (``application`` by default).
 
@@ -82,6 +81,35 @@ The environment variables can be defined globally by the user or in
 the ``set_local_env.bat`` scripts.  When the ``.bat`` scripts
 are executed, the ``set_local_env.bat`` script is executed if it exists.
 Configure these files to customize the environment locally.
+
+Customize BSP
+-------------
+
+
+MicroEJ Core Engine Task 
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are several macros available to customize the C task of the microjvm in the file ``AMBIQ-AMAP4PEVB-FreeRTOS-bsp\projects\microej\main\src\main.c``:
+
+- ``MICROEJ_CORE_ENGINE_TASK_STACK_SIZE``: indicates the amount of memory allocated for the microjvm stack.
+- ``JAVA_TASK_PRIORITY``: indicates priority of the microjvm C task.
+
+
+
+Launch Coremark
+~~~~~~~~~~~~~~~
+
+You will need to define the macro ``MICROEJ_CORE_VALIDATION`` in the compilation target in order to launch coremark benchmark.
+Note that the java application cannot start when this macro is enabled.
+
+Flash the Board
+---------------
+
+The ``run*`` scripts can also be used to flash the device with the
+MicroEJ Firmware.
+
+The board can also be flashed using the IAR IDE. Once the IAR IDE is open with the workspace ``AMBIQ-AMAP4PEVB-FreeRTOS-bsp\projects\microej\EWARM\application.eww``, click on ``Project > Download > Download active application``.
+
 
 Debugging with the |BOARD_NAME|
 -------------------------------
